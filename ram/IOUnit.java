@@ -1,17 +1,26 @@
 package ram;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import instruction.*;
 
+/**
+ * Clase que define las cintas de entrada y salida de la máquina, además del análisis sintáctico del programa.
+ * @author Pedro Miguel Lagüera Cabrera
+ * Feb 16, 2017
+ * IOUnit.java
+ */
 public class IOUnit {
 	
+	private Map<String, Integer> labelMap;
 	private List<Integer> inputTape, outputTape;
 	private String outputPath;
 	private int lineNumber;
@@ -21,6 +30,7 @@ public class IOUnit {
 		outputPath = outputPath_p;
 		inputTape = new ArrayList<Integer>();
 		outputTape = new ArrayList<Integer>();
+		labelMap = new HashMap<String, Integer>();
 		lineNumber = 1;
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(inputPath_p))) {
@@ -116,13 +126,23 @@ public class IOUnit {
 				
 				if (label != "")
 					newInst.addLabel(label);
-				
-				//System.out.println(newInst);
-				
+								
 				instArray.add(newInst);
 				
 			}
-							
+			
+			for(int i = 0; i < instArray.size(); i++)
+				 if(!instArray.get(i).getLabel().equals(""))
+					 labelMap.put(instArray.get(i).getLabel(), i);
+			
+			InstTypeJump jumpInst = new InstTypeJump("JUMP", "");
+			for(int i = 0; i < instArray.size(); i++)
+				 if(instArray.get(i) instanceof InstTypeJump){
+					 jumpInst = (InstTypeJump) instArray.get(i);
+					 if(!labelMap.containsKey(jumpInst.getArgument()))
+						 throw new SyntaxException(newInst + " : " + jumpInst.getArgument() + " LABEL DOES NOT EXIST");
+				}
+				
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -149,6 +169,10 @@ public class IOUnit {
 	
 	public String outputTapeToString(){
 		return outputTape.toString();
+	}
+	
+	public int getIndexLabel(String label){
+		return labelMap.get(label);
 	}
 
 }

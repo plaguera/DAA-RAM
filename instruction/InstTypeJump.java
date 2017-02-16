@@ -1,21 +1,26 @@
 package instruction;
 
+/**
+ * Clase que define instrucciones de salto.
+ * @author Pedro Miguel Lagüera Cabrera
+ * Feb 16, 2017
+ * InstTypeJump.java
+ */
 public class InstTypeJump extends Instruction {
 
-	public String instName;
-	public String operValue;
-	public String label;
+	private String name;
+	private String argument;
+	private String label;
 	
-	public InstTypeJump(String instName_p, String operValue_p) {
+	public InstTypeJump(String name_p, String argument_p) {
 		
-		if (instExists(instName_p)){
-			instName = instName_p;
-			operValue = operValue_p;
+		if (instExists(name_p)){
+			name = name_p;
+			argument = argument_p;
 			label = "";
 		}
-		else {
-			throw new IllegalArgumentException("ERROR - INSTRUCTION " + instName_p + " DOESN'T EXIST !!");
-		}
+		else
+			throw new IllegalArgumentException("ERROR - INSTRUCTION " + name_p + " DOESN'T EXIST !!");
 		
 	}
 	
@@ -39,7 +44,15 @@ public class InstTypeJump extends Instruction {
 		if (label != "")
 			output = label + ": ";
 		
-		return output + instName + " " + operValue;
+		return output + name + " " + argument;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public String getArgument(){
+		return argument;
 	}
 	
 	public String getLabel(){

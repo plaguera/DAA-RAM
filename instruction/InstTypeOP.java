@@ -1,23 +1,28 @@
 package instruction;
 
+/**
+ * Clase que define instrucciones que requieren un operando entero y un modo de direccionamiento.
+ * @author Pedro Miguel Lagüera Cabrera
+ * Feb 16, 2017
+ * InstTypeOP.java
+ */
 public class InstTypeOP extends Instruction {
 
-	public String instName;
-	public Addressing operType;
-	public int operValue;
-	public String label;
+	private String name;
+	private Addressing addressing;
+	private int argument;
+	private String label;
 	
-	public InstTypeOP(String instName_p, Addressing operType_p, int operValue_p) {
+	public InstTypeOP(String name_p, Addressing addressing_p, int argument_p) {
 		
-		if (instExists(instName_p) && operCompatible(instName_p, operType_p, operValue_p)){
-			instName = instName_p;
-			operType = operType_p;
-			operValue = operValue_p;
+		if (instExists(name_p) && operCompatible(name_p, addressing_p, argument_p)){
+			name = name_p;
+			addressing = addressing_p;
+			argument = argument_p;
 			label = "";
 		}
-		else {
-			throw new IllegalArgumentException("ERROR - INSTRUCTION " + instName_p + " DOESN'T EXIST WITH " + operType_p + " ADDRESSING !!");
-		}
+		else
+			throw new IllegalArgumentException("ERROR - INSTRUCTION " + name_p + " DOESN'T EXIST WITH " + addressing_p + " ADDRESSING !!");
 		
 	}
 	
@@ -55,15 +60,27 @@ public class InstTypeOP extends Instruction {
 		String output = "";
 		if (label != "")
 			output = label + ": ";
-		output += instName;
-		if (operType == Addressing.CONSTANT)
-			output += " =" + operValue;
-		else if (operType == Addressing.DIRECT)
-			output += " " + operValue;
-		else if (operType == Addressing.INDIRECT)
-			output += " *" + operValue;
+		output += name;
+		if (addressing == Addressing.CONSTANT)
+			output += " =" + argument;
+		else if (addressing == Addressing.DIRECT)
+			output += " " + argument;
+		else if (addressing == Addressing.INDIRECT)
+			output += " *" + argument;
 		
 		return output;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public int getArgument(){
+		return argument;
+	}
+	
+	public Addressing getAddressing(){
+		return addressing;
 	}
 	
 	public String getLabel(){

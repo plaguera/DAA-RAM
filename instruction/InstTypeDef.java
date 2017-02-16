@@ -1,19 +1,24 @@
 package instruction;
 
+/**
+ * Clase que define instrucciones sin argumentos.
+ * @author Pedro Miguel Lagüera Cabrera
+ * Feb 16, 2017
+ * InstTypeDef.java
+ */
 public class InstTypeDef extends Instruction {
 	
-	public String instName;
-	public String label;
+	private String name;
+	private String label;
 	
-	public InstTypeDef(String instName_p) {
+	public InstTypeDef(String name_p) {
 		
-		if (instExists(instName_p)){
-			instName = instName_p;
+		if (instExists(name_p)){
+			name = name_p;
 			label = "";
 		}
-		else {
-			throw new IllegalArgumentException("ERROR - INSTRUCTION " + instName_p + " DOESN'T EXIST !!");
-		}
+		else
+			throw new IllegalArgumentException("ERROR - INSTRUCTION " + name_p + " DOESN'T EXIST !!");
 		
 	}
 	
@@ -35,7 +40,11 @@ public class InstTypeDef extends Instruction {
 		if (label != "")
 			output = label + ": ";
 		
-		return output + instName;
+		return output + name;
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	public String getLabel(){

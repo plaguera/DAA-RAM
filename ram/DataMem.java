@@ -3,6 +3,12 @@ package ram;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Clase que define la memoria de datos de la máquina.
+ * @author Pedro Miguel Lagüera Cabrera
+ * Feb 16, 2017
+ * DataMem.java
+ */
 public class DataMem {
 	
 	private List<Integer> registry;
