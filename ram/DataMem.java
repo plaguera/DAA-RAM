@@ -24,14 +24,12 @@ public class DataMem {
 	
 	public int getDirect(int index){
 		resize(index);
-		resize(registry.get(index));
 		return registry.get(index);
 	}
 	
 	public int getIndirect(int index){
 		resize(index);
 		resize(registry.get(index));
-		resize(registry.get(registry.get(index)));
 		return registry.get(registry.get(index));
 	}
 	
@@ -42,6 +40,10 @@ public class DataMem {
 	
 	public int size(){
 		return registry.size();
+	}
+	
+	public String toString(){
+		return registry.toString();
 	}
 
 }

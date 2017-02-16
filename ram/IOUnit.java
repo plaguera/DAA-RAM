@@ -8,16 +8,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import instruction.*;
+
 public class IOUnit {
 	
-	private ArrayList<Integer> inputTape, outputTape;
+	private List<Integer> inputTape, outputTape;
 	private String outputPath;
+	private int lineNumber;
 	
 	public IOUnit(String inputPath_p, String outputPath_p){
 		
 		outputPath = outputPath_p;
 		inputTape = new ArrayList<Integer>();
 		outputTape = new ArrayList<Integer>();
+		lineNumber = 1;
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(inputPath_p))) {
 
@@ -58,6 +62,7 @@ public class IOUnit {
 	public List<Instruction> parseInstructions(String filePath){
 		
 		List<Instruction> instArray = new ArrayList<Instruction>();
+		lineNumber = 1;
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 
@@ -65,17 +70,22 @@ public class IOUnit {
 			Instruction newInst = new InstTypeDef("HALT");
 			
 			while ((sCurrentLine = br.readLine()) != null) {
+				
+				lineNumber++;
 				if(sCurrentLine.startsWith("#") || sCurrentLine.trim().isEmpty())
 					continue;
-				String[] fullInst = sCurrentLine.trim().replace("\t", "").split(":");
-				String etiq = "", noTagInst;
 				
-				if(fullInst.length > 2){
-					System.out.println("ERROR - Too many ':'");
-					break;
-				}
+				String[] trimComment = sCurrentLine.split("#");
+				
+				String[] fullInst = trimComment[0].trim().replace("\t", "").replaceAll("\\s{2,}", " ").split(":");
+				
+				String label = "", noTagInst = "";
+				
+				if(fullInst.length > 2)
+					throw new SyntaxException(newInst + " : MORE THAN ONE ':' ON INSTRUCTION");
+				
 				else if (fullInst.length == 2){
-					etiq = fullInst[0];
+					label = fullInst[0];
 					noTagInst = fullInst[1];
 				}
 				else
@@ -84,37 +94,61 @@ public class IOUnit {
 				String[] instTokens = noTagInst.replace("\t", " ").trim().split("\\s");
 				
 				if (instTokens.length == 2){
-					if (instTokens[1].matches("\\d+")){
-						newInst = new InstTypeOP(instTokens[0].toUpperCase(), Operand.INDIRADDRESS, Integer.parseInt(instTokens[1]));
-					}
-					else if (instTokens[1].startsWith("=")){
-						newInst = new InstTypeOP(instTokens[0].toUpperCase(), Operand.CONSTANT, Integer.parseInt(instTokens[1].substring(1)));
-					}
-					else if (instTokens[1].startsWith("*")){
-						newInst = new InstTypeOP(instTokens[0].toUpperCase(), Operand.DIRECTADDRESS, Integer.parseInt(instTokens[1].substring(1)));
-					}
-					else if (instTokens[1].matches("[0-9a-zA-Z]+")){
+					
+					if (instTokens[1].matches("[0-9]+"))
+						newInst = new InstTypeOP(instTokens[0].toUpperCase(), Addressing.DIRECT, Integer.parseInt(instTokens[1]));
+					else if (instTokens[1].startsWith("="))
+						newInst = new InstTypeOP(instTokens[0].toUpperCase(), Addressing.CONSTANT, Integer.parseInt(instTokens[1].substring(1)));
+					else if (instTokens[1].startsWith("*"))
+						newInst = new InstTypeOP(instTokens[0].toUpperCase(), Addressing.INDIRECT, Integer.parseInt(instTokens[1].substring(1)));
+					else if (instTokens[1].matches("^[a-zA-Z0-9]*$"))
 						newInst = new InstTypeJump(instTokens[0].toUpperCase(), instTokens[1]);
-					}
+					else 
+						throw new SyntaxException(newInst + " : WRONG ARGUMENT SYNTAX [=NUMBER, *NUMBER, NUMBER, [0-9a-zA-Z]+]");
+
 				}
-				else if (instTokens.length == 1){
-					newInst = new InstTypeDef(instTokens[0].toUpperCase());
-				}
-				if (etiq != "")
-					newInst.addLabel(etiq);
 				
-				System.out.println(newInst);
+				else if (instTokens.length == 1)
+					newInst = new InstTypeDef(instTokens[0].toUpperCase());
+				
+				else
+					throw new SyntaxException(newInst + " : WRONG NUMBER OF ARGUMENTS");
+				
+				if (label != "")
+					newInst.addLabel(label);
+				
+				//System.out.println(newInst);
 				
 				instArray.add(newInst);
 				
 			}
 							
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
+		}
+		catch (IllegalArgumentException e){
+			syntaxErrorHandler(e);
+		}
+		catch (SyntaxException e){
+			syntaxErrorHandler(e);
 		}
 		
 		return instArray;
 		
+	}
+	
+	public void syntaxErrorHandler(Exception e){
+		System.out.println("SYNTAX ERROR - LINE " + (lineNumber-1) + " - " + e.getMessage() + " !!");
+		System.exit(0);
+	}
+	
+	public String inputTapeToString(){
+		return inputTape.toString();
+	}
+	
+	public String outputTapeToString(){
+		return outputTape.toString();
 	}
 
 }

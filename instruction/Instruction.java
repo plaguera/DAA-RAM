@@ -1,6 +1,6 @@
-package ram;
+package instruction;
 
-abstract class Instruction {
+public abstract class Instruction {
 	
 	public abstract void addLabel(String newLabel);
 	public abstract String getLabel();

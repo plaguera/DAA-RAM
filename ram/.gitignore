@@ -11,3 +11,5 @@
 /Main.class
 /IOUnit.class
 /DataMem.class
+/Addressing.class
+/SyntaxException.class

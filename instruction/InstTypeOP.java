@@ -1,13 +1,13 @@
-package ram;
+package instruction;
 
 public class InstTypeOP extends Instruction {
 
 	public String instName;
-	public Operand operType;
+	public Addressing operType;
 	public int operValue;
 	public String label;
 	
-	public InstTypeOP(String instName_p, Operand operType_p, int operValue_p) {
+	public InstTypeOP(String instName_p, Addressing operType_p, int operValue_p) {
 		
 		if (instExists(instName_p) && operCompatible(instName_p, operType_p, operValue_p)){
 			instName = instName_p;
@@ -16,8 +16,7 @@ public class InstTypeOP extends Instruction {
 			label = "";
 		}
 		else {
-			System.out.println("ERROR - INSTRUCTION " + instName_p + " DOESN'T EXIST WITH " + operType_p + " !!");
-			//System.exit(0);
+			throw new IllegalArgumentException("ERROR - INSTRUCTION " + instName_p + " DOESN'T EXIST WITH " + operType_p + " ADDRESSING !!");
 		}
 		
 	}
@@ -42,13 +41,11 @@ public class InstTypeOP extends Instruction {
 		return exists;
 	}
 	
-	private boolean operCompatible(String newInst, Operand newOperType, int newOperValue){
-		
-		if(newInst.equals("STORE") && newOperType == Operand.CONSTANT)
+	private boolean operCompatible(String newInst, Addressing newOperType, int newOperValue){
+
+		if((newInst.equals("READ") || newInst.equals("WRITE")) && newOperType == Addressing.DIRECT && newOperValue == 0) 
 			return false;
-		if((newInst.equals("READ") || newInst.equals("WRITE")) && newOperType == Operand.INDIRADDRESS && newOperValue == 0) 
-			return false;
-		if((newInst.equals("READ") || newInst.equals("WRITE")) && newOperType == Operand.CONSTANT)
+		if((newInst.equals("READ") || newInst.equals("STORE")) && newOperType == Addressing.CONSTANT)
 			return false;
 		
 		return true;
@@ -59,11 +56,11 @@ public class InstTypeOP extends Instruction {
 		if (label != "")
 			output = label + ": ";
 		output += instName;
-		if (operType == Operand.CONSTANT)
+		if (operType == Addressing.CONSTANT)
 			output += " =" + operValue;
-		else if (operType == Operand.INDIRADDRESS)
+		else if (operType == Addressing.DIRECT)
 			output += " " + operValue;
-		else if (operType == Operand.DIRECTADDRESS)
+		else if (operType == Addressing.INDIRECT)
 			output += " *" + operValue;
 		
 		return output;

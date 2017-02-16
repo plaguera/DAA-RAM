@@ -1,19 +1,20 @@
-package ram;
+package instruction;
 
-public class InstTypeDef extends Instruction {
-	
+public class InstTypeJump extends Instruction {
+
 	public String instName;
+	public String operValue;
 	public String label;
 	
-	public InstTypeDef(String instName_p) {
+	public InstTypeJump(String instName_p, String operValue_p) {
 		
 		if (instExists(instName_p)){
 			instName = instName_p;
+			operValue = operValue_p;
 			label = "";
 		}
 		else {
-			System.out.println("ERROR - INSTRUCTION" + instName_p + " DOESN'T EXIST !!");
-			//System.exit(0);
+			throw new IllegalArgumentException("ERROR - INSTRUCTION " + instName_p + " DOESN'T EXIST !!");
 		}
 		
 	}
@@ -24,8 +25,10 @@ public class InstTypeDef extends Instruction {
 	
 	private boolean instExists(String newInst){
 		boolean exists = true;
-			switch (newInst){
-			case "HALT": break;
+		switch (newInst){
+			case "JUMP": break;
+			case "JZERO": break;
+			case "JGTZ": break;
 			default: exists = false;
 		}
 		return exists;
@@ -36,11 +39,11 @@ public class InstTypeDef extends Instruction {
 		if (label != "")
 			output = label + ": ";
 		
-		return output + instName;
+		return output + instName + " " + operValue;
 	}
 	
 	public String getLabel(){
 		return label;
 	}
-
+	
 }
