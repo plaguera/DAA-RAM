@@ -1,19 +1,19 @@
 package instruction;
 
 /**
- * Clase que define instrucciones que requieren un operando entero y un modo de direccionamiento.
+ * Clase que define instrucciones que requieren un operando entero y un modo de direccionamiento. (LABEL): NAME (ADDRESSING)ARGUMENT
  * @author Pedro Miguel Lagüera Cabrera
  * Feb 16, 2017
  * InstTypeOP.java
  */
-public class InstTypeOP extends Instruction {
+public class InstOperation extends Instruction {
 
 	private String name;
 	private Addressing addressing;
 	private int argument;
 	private String label;
 	
-	public InstTypeOP(String name_p, Addressing addressing_p, int argument_p) {
+	public InstOperation(String name_p, Addressing addressing_p, int argument_p) {
 		
 		if (instExists(name_p) && operCompatible(name_p, addressing_p, argument_p)){
 			name = name_p;
@@ -26,10 +26,19 @@ public class InstTypeOP extends Instruction {
 		
 	}
 	
+	/**
+	 * Añade una etiqueta a la instrucción.
+	 * @param newLabel
+	 */
 	public void addLabel(String newLabel){
 		label = newLabel;
 	}
 	
+	/**
+	 * Comprueba si la instrucción existe dentro del repertorio de este tipo.
+	 * @param newInst
+	 * @return	True si existe, False si no existe.
+	 */
 	private boolean instExists(String newInst){
 		boolean exists = true;
 		switch (newInst){
@@ -46,6 +55,13 @@ public class InstTypeOP extends Instruction {
 		return exists;
 	}
 	
+	/**
+	 * Comprueba si la combinación de instrucción, direccionamiento y operando está permitida.
+	 * @param newInst
+	 * @param newOperType
+	 * @param newOperValue
+	 * @return True si está permitida, False si no está permitida.
+	 */
 	private boolean operCompatible(String newInst, Addressing newOperType, int newOperValue){
 
 		if((newInst.equals("READ") || newInst.equals("WRITE")) && newOperType == Addressing.DIRECT && newOperValue == 0) 
@@ -56,6 +72,10 @@ public class InstTypeOP extends Instruction {
 		return true;
 	}
 	
+	/**
+	 * Permite imprimir objetos de esta clase de manera formateada por pantalla.
+	 * @return
+	 */
 	public String toString(){
 		String output = "";
 		if (label != "")
@@ -71,18 +91,34 @@ public class InstTypeOP extends Instruction {
 		return output;
 	}
 	
+	/**
+	 * Getter del nombre de la instrucción.
+	 * @return
+	 */
 	public String getName(){
 		return name;
 	}
 	
+	/**
+	 * Getter del argumento de la instrucción.
+	 * @return
+	 */
 	public int getArgument(){
 		return argument;
 	}
 	
+	/**
+	 * Getter del direccionamiento de la instrucción.
+	 * @return
+	 */
 	public Addressing getAddressing(){
 		return addressing;
 	}
 	
+	/**
+	 * Getter de la etiqueta de la instrucción.
+	 * @return
+	 */
 	public String getLabel(){
 		return label;
 	}

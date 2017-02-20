@@ -1,9 +1,9 @@
 package ram;
 
 import java.util.List;
-import instruction.InstTypeDef;
-import instruction.InstTypeJump;
-import instruction.InstTypeOP;
+import instruction.InstDefault;
+import instruction.InstJump;
+import instruction.InstOperation;
 import instruction.Instruction;
 
 /**
@@ -14,11 +14,30 @@ import instruction.Instruction;
  */
 public class ControlUnit {
 	
+	/**
+	 * Atributo que en caso de activarse se muestra información extra en tiempo de ejecución.
+	 */
 	public final boolean DEBUG;
 	
+	/**
+	 * La cola de ejecución es una lista de instrucciones.
+	 */
 	private List<Instruction> progMem;
+	
+	/**
+	 * Memoria de datos o banco de registros.
+	 */
 	private DataMem dataMem;
+	
+	/**
+	 * Instruction Pointer apunta a la instrucción que se está ejecutando actualmente. 'instructionsExec' es el
+	 * número total de instrucciones ejecutadas hasta el momento.
+	 */
 	private int IP, instructionsExec;
+	
+	/**
+	 * Unidad de entrada y salida y análisis sintáctico.
+	 */
 	private IOUnit ioUnit;
 
 	public ControlUnit(String filePath, String inputTape, String outputTape, String debug){
@@ -47,19 +66,22 @@ public class ControlUnit {
 		while(IP < progMem.size() && !halt){
 			
 			Instruction newInst = progMem.get(IP);
-						
-			if(newInst instanceof InstTypeDef){
+			
+			// Instrucción de tipo Default.
+			if(newInst instanceof InstDefault){
 				
-				InstTypeDef currentInst = (InstTypeDef) progMem.get(IP);
+				InstDefault currentInst = (InstDefault) progMem.get(IP);
 				switch (currentInst.getName()){
 					case "HALT": halt = true; break;
 					default: break;
 				}
 				
 			}
-			else if(newInst instanceof InstTypeJump){
+			
+			// Instrucción de tipo Jump.
+			else if(newInst instanceof InstJump){
 				
-				InstTypeJump currentInst = (InstTypeJump) progMem.get(IP);
+				InstJump currentInst = (InstJump) progMem.get(IP);
 				int newIP = ioUnit.getIndexLabel(currentInst.getArgument());
 						
 				switch (currentInst.getName()){
@@ -70,9 +92,11 @@ public class ControlUnit {
 				}
 				
 			}
-			else if(newInst instanceof InstTypeOP){
+			
+			// Instrucción de tipo Operation.
+			else if(newInst instanceof InstOperation){
 				
-				InstTypeOP currentInst = (InstTypeOP) progMem.get(IP);
+				InstOperation currentInst = (InstOperation) progMem.get(IP);
 				int finalValue = 0;
 				
 				if(currentInst.getName().equals("STORE") || currentInst.getName().equals("READ")){
@@ -105,10 +129,10 @@ public class ControlUnit {
 						default: break;
 					}
 				}
-				IP++;
-				instructionsExec++;
+				IP++;	
 				
 			}
+			instructionsExec++;
 			if(DEBUG){
 				System.out.println("IP = " + IP);
 				System.out.println("INST -> " + newInst);

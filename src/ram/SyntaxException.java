@@ -1,7 +1,8 @@
 package ram;
 
 /**
- * Clase que define una excepción de error de sintaxis.
+ * Clase que define una excepción de error de sintaxis. Es necesaria ya que las excepciones
+ * se producen en tiempo de ejecución, por ello en Java es innecesario tener excepciones de sintaxis.
  * @author Pedro Miguel Lagüera Cabrera
  * Feb 16, 2017
  * SyntaxException.java
